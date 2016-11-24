@@ -27,3 +27,12 @@
 *.exe
 *.out
 *.app
+
+# Python binary
+*.pyc
+
+# Target binary
+ims
+
+# Output
+*.dat
