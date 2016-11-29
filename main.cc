@@ -1,47 +1,48 @@
-////////////////////////////////////////////////////////////////////////////
-// Model ball.cc                SIMLIB/C++
-//
-// Bouncing ball (combined simulation, v.1)
-//
+/*
+Simulation model of a restaurant during a lunch time
 
-#include "simlib.h"
+Authors:
+  xkrajn02 - Krajnak Martin
+  xkondu00 - Kondula Vaclav
+*/
+#include "main.h"
 
-const double g = 9.81;          // gravity acceleration
+using namespace std;
+vector<Zone *> zones;
 
-class Micek : ConditionDown {   // ball model description
-  Integrator v,y;               // status
-  unsigned count;               //
-  void Action()  {              //
-      Print("# %u:\n", ++count);
-      Out();                    // before
-      v = -0.8 * v.Value();     // loss of energy...
-      y = 0;                    // numeric error elimination
-      if(count>=10)             // max 10
-        Stop();                 // end of simulation experiment
-  }
-public:
-  Micek(double initialposition) :
-    ConditionDown(y),           // detects change of (y>=0) from TRUE to FALSE
-    v(-g),                      // y' = INTG( - m * g )
-    y(v, initialposition),      // y  = INTG( y' )
-    count(0) {}                 // initialize number
-  void Out() {
-    Print("%-9.3f  % -9f  %-9g\n",
-          T.Value(), v.Value(), y.Value());
-  }
-};
-
-Micek m1(1.0);                  // model
-
-void Sample() { m1.Out(); }     // output
-Sampler S(Sample,0.01);
-
-int main() {                    // experiment description
-  SetOutput("ball.dat");
-  _Print("# ball - bouncing ball model\n");
-  Init(0);                      // initialization of experiment
-  SetStep(1e-10,0.5);           // integration step
-  SetAccuracy(1e-5,0.001);      // max. integration error
-  Run();                        // simulation
+int main() {
+  SetOutput("output.out");
+  Init(TIME_BEGIN, TIME_END + 3 * HOUR);
+  init_zones();
+  (new Generator)->Activate();
+  Run();
   return 0;
 }
+
+void init_zones(){
+  //CHANGE!!
+  vector<int> t1 = {4,4,4,4,6};
+  vector<int> t2 = {2,2,2,4,8};
+  Zone * zone1 = new Zone(1, t1);
+  Zone * zone2 = new Zone(2, t2);
+  zones.reserve(2);
+  zones.push_back(zone1);
+  zones.push_back(zone2);
+  return;
+}
+
+void Group::Behavior(){
+    this->timestamps.push_back(Time); // Save arrival
+    // Store * table = find_table();
+    // if (!table){
+    //     // TODO: odchazi nebo se rozdeluji
+    //     std::cout << "/* Group didn't get table */" << std::endl;
+    //     return;
+    // }
+    // Seize(TABLE, this->size);
+    // Wait(TIME_TO_SIT);
+    // Seize();
+
+
+}
+void Group::next_phase(){/*TODO*/}

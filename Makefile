@@ -5,7 +5,7 @@ SRCS=main.cc
 TARGET=ims
 
 all:
-	${CXX} ${SRCS} -o ${TARGET} ${LDFLAGS}
+	${CXX} -std=c++11 -Wall ${SRCS} -o ${TARGET} ${LDFLAGS}
 
 run:
 	./${TARGET}
