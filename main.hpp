@@ -42,6 +42,8 @@ const int TIME_TO_EAT_SOUP_H = 7 * MINUTE;
 const int TIME_TO_PAY_L = 10;
 const int TIME_TO_PAY_H = 20;
 
+const double CHANCE_TO_LEAVE = 0.4;
+
 
 /* ENVIRONMENT DESCRIPTION */
 // TODO

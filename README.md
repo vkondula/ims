@@ -15,7 +15,7 @@ xkrajn02@stud.fit.vutbr.cz
 ... from http://www.fit.vutbr.cz/~peringer/SIMLIB/source/
 
 2. Configure shared libraries
-... ensure that there is a line in */usr/local/bin* in */etc/ld.so.conf*
+... ensure that there is a line */usr/local/lib* in */etc/ld.so.conf*
 ... if you change this file you need to run *# ldconfig*
 
 3. Run *make*

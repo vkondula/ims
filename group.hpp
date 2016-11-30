@@ -27,24 +27,35 @@ extern vector<Zone *> zones;
 
 class Group : public Process {
   int size;
-  tPhase phase;
+  bool timed;
   vector<int> timestamps;
-  Zone * zone;
-  Store * table;
+  tPhase phase;
+  Zone * zone = NULL;
+  Store * table = NULL;
+  Group * dependent_group = NULL;
   void Behavior();
   bool set_phase(tPhase p);
   bool lf_table();
-  Zone * find_zone_with_table(bool force);
+  Group * group_split();
 public:
   Group(int size){
     this->size = size;
     this->timestamps.reserve(END_ENUM * 2);
-    this->Activate();
+    this->quick_sit(false);
     cout << "Group with "<< size <<" members arrived at: " << Time << "\n";
   }
   Waiter * curr_waiter;
+  void quick_sit(bool t);
+  void set_dependent_group(Group * g);
+  void set_zone(Zone * z);
+  void set_table_in_zone(bool force);
+  void find_zone_with_table(bool force);
   Store find_table();
   Group split_group();
+  tPhase get_phase();
+  Group * get_dependent_group();
+  Zone * get_zone();
+  Store * get_table();
 };
 
 #endif // GROUP_H
