@@ -13,6 +13,8 @@ const int MINUTE = 60;
 const int HOUR = 60 * MINUTE;
 const int TIME_BEGIN = 11 * HOUR;
 const int TIME_END = 14 * HOUR;
+const int PEAK_TIME_START = 12 * HOUR;
+const int PEAK_TIME_END = 13 * HOUR;
 
 /* OPERATIONS DURATIONS */
 // TODO

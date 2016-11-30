@@ -23,8 +23,12 @@ int main() {
 
 void Generator::Behavior(){
   if(Time < TIME_END){
-    Activate(Time + Exponential(2 * MINUTE)); //CHANGE!!
 
+    if (Time > PEAK_TIME_START && Time < PEAK_TIME_END){ // more people comming
+        Activate(Time + Exponential(MINUTE));
+    }else{
+      Activate(Time + Exponential(2 * MINUTE));
+    }
     double pick_group = Random();//TODO: change weights
     int member_count = 0;
 
@@ -36,7 +40,7 @@ void Generator::Behavior(){
     if (pick_group > 0.8 && pick_group <= 0.85)         member_count=6;
     if (pick_group > 0.85 && pick_group <= 0.9)         member_count=7;
     if (pick_group > 0.90 && pick_group <= 1)           member_count=8;
-    new Group(member_count); //CHANGE!!
+    new Group(member_count);
   }
 }
 
