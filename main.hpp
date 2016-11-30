@@ -7,7 +7,7 @@
 #include <vector>
 #include <time.h>
 #include "simlib.h"
-
+#include "group.hpp"
 /* WORKING TIME DEFINITION */
 const int MINUTE = 60;
 const int HOUR = 60 * MINUTE;
@@ -40,19 +40,10 @@ const int TIME_TO_PAY_H = 20;
 
 
 /* ENVIRONMENT DESCRIPTION */
-
 // TODO
 
-enum tPhase : int {
-    ARRIVE,
-    LF_TABLE,
-    WF_ORDER,
-    WF_DRINK,
-    WF_MEAL,
-    WF_PAYMENT,
-    LEAVING,
-};
 class Zone;
+class Group;
 
 class Waiter : public Process {
   Zone * zone;
@@ -82,24 +73,6 @@ public:
   }
   Store * find_table(int min_size);
   Queue q;
-};
-
-class Group : public Process {
-  int size;
-  tPhase phase;
-  Store table;
-  std::vector<int> timestamps;
-  void Behavior();
-public:
-  Group(int size){
-    this->size = size;
-    this->timestamps.reserve(8);
-    this->Activate();
-    std::cout << "Group with "<< size <<" members arrived at: " << Time << "\n";
-  }
-  Waiter * curr_waiter;
-  Store find_table();
-  Group split_group();
 };
 
 class Generator : public Event {

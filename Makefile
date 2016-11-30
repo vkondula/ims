@@ -1,7 +1,7 @@
 CXX=g++
 LDFLAGS=-lsimlib -lm
 
-SRCS=main.cc
+SRCS=main.cpp group.cpp 
 TARGET=ims
 
 all:
