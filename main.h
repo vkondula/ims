@@ -93,7 +93,7 @@ public:
     this->size = size;
     this->timestamps.reserve(8);
     this->Activate();
-    std::cout << "Group arrived at: " << Time << "\n";
+    std::cout << "Group with "<< size <<" members arrived at: " << Time << "\n";
   }
   Waiter * curr_waiter;
   Store find_table();
@@ -101,12 +101,7 @@ public:
 };
 
 class Generator : public Event {
-    void Behavior(){
-        if(Time < TIME_END){
-            Activate(Time + Exponential(2 * MINUTE)); //CHANGE!!
-            new Group(3); //CHANGE!!
-        }
-    }
+    void Behavior();
 };
 
 void init_zones();

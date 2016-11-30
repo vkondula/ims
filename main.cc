@@ -21,6 +21,26 @@ int main() {
   return 0;
 }
 
+void Generator::Behavior(){
+  if(Time < TIME_END){
+    Activate(Time + Exponential(2 * MINUTE)); //CHANGE!!
+
+    double pick_group = Random();//TODO: change weights
+    int member_count = 0;
+
+    if (pick_group > 0 && pick_group <= 0.1)            member_count=1;
+    if (pick_group > 0.1 && pick_group <= 0.4)          member_count=2;
+    if (pick_group > 0.4 && pick_group <= 0.5)          member_count=3;
+    if (pick_group > 0.5 && pick_group <= 0.7)          member_count=4;
+    if (pick_group > 0.7 && pick_group <= 0.8)          member_count=5;
+    if (pick_group > 0.8 && pick_group <= 0.85)         member_count=6;
+    if (pick_group > 0.85 && pick_group <= 0.9)         member_count=7;
+    if (pick_group > 0.90 && pick_group <= 1)           member_count=8;
+    new Group(member_count); //CHANGE!!
+  }
+}
+
+
 void init_zones(){
   //CHANGE!!
   vector<int> t1 = {4,4,4,4,6};
