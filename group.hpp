@@ -6,25 +6,34 @@
 enum tPhase : int {
   ARRIVE,
   LF_TABLE,
+  SITING,
   WF_ORDER,
-  WF_DRINK,
+  SOUP,
+  // WF_DRINK,
+  WF_CLEAN,
   WF_MEAL,
+  MEAL,
   WF_PAYMENT,
+  PAYING,
   LEAVING,
+  END_ENUM,
 };
 
 class Waiter;
+class Zone;
 
 class Group : public Process {
   int size;
   tPhase phase;
-  Store table;
   std::vector<int> timestamps;
+  Zone * zone;
+  Store * table;
   void Behavior();
+  bool set_phase(tPhase p);
 public:
   Group(int size){
     this->size = size;
-    this->timestamps.reserve(8);
+    this->timestamps.reserve(END_ENUM * 2);
     this->Activate();
     std::cout << "Group with "<< size <<" members arrived at: " << Time << "\n";
   }
