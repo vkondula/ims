@@ -60,17 +60,21 @@ void init_zones(){
 
 void Waiter::Behavior(){
   while (true){
-      if (!this->zone->q.Empty()){
-        Group * group = (Group *) this->zone->q.GetFirst();
-        // TODO: cesta kuchyn -> zona
-        group->curr_waiter = this;
-        group->Activate();
-        Passivate();
-        // TODO: cesta z5
-      } else {
+      Queue * q = NULL;
+      if (!this->zone->priority_q.Empty()) q = &(this->zone->priority_q);
+      else if (!this->zone->q.Empty()) q = &(this->zone->q);
+      else {
         /* Wait for next request */
         Wait(10);
+        continue;
       }
+      Group * group = (Group *) q->GetFirst();
+      // TODO: cesta kuchyn -> zona
+      group->curr_waiter = this;
+      group->Activate();
+      Passivate();
+      // TODO: cesta z5
+
   }
 }
 

@@ -54,7 +54,7 @@ bool Group::set_phase(tPhase p){
       break;
     case WF_PAYMENT:
       /* Wating for waiter to take away dishes (meal) and pay */
-      this->zone->q.Insert(this);
+      this->zone->priority_q.Insert(this);
       Passivate();
       break;
     case PAYING:

@@ -79,6 +79,7 @@ public:
   }
   Store * find_table(int min_size, bool force);
   Queue q;
+  Queue priority_q;
 };
 
 class Generator : public Event {
