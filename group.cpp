@@ -65,6 +65,15 @@ bool Group::set_phase(tPhase p){
       break;
     case LEAVING:
       /* Leaving the restaurant */
+      if (this->get_dependent_group()){
+        if (this->get_dependent_group()->get_phase() == LEAVING){
+          /* Ping second group so they can leave together */
+          this->get_dependent_group()->Activate();
+        } else {
+          /* Wait for second group to finish lunch */
+          Passivate();
+        }
+      }
       cerr << "/* ODCHAZI */" << endl;
       Leave(*this->table, this->size);
       break;
