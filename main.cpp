@@ -77,18 +77,22 @@ void Waiter::set_zone(Zone * z){
   this->zone = z;
 }
 
-Zone * find_zone_with_table(int size){
-  // TODO: zmenit poradit zon pro kazdou zkupinu
-  for (Zone * z : zones){
-    Store * s = z->find_table(size);
-    if(s) return z;
+Store * Zone::find_table(int size, bool force){
+  vector<Store *> table_g(this->table); // Create copy of table pointers
+  random_shuffle(table_g.begin(), table_g.end()); // Validate tables in random order
+  vector<Store *> table_acceptable; // Acceptable tables (>= then group)
+  for(Store * t : table_g){
+      if ((t->Free() >= (unsigned int)size) && (force || t->Empty())){
+        table_acceptable.push_back(t);
+      }
   }
-  return NULL;
-}
-
-Store * Zone::find_table(int size){
-  for(Store * t : this->table){
-    if (t->Free() >= (unsigned int)size ) return t;
+  unsigned int min_size = 9000;
+  Store * table = NULL;
+  for(Store * t : table_acceptable){ //return smallest acceptable table for group
+      if (t->Capacity() < min_size){
+        min_size = t->Capacity();
+        table = t;
+      }
   }
-  return NULL;
+  return table;
 }

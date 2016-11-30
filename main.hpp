@@ -8,6 +8,8 @@
 #include <time.h>
 #include "simlib.h"
 #include "group.hpp"
+using namespace std;
+
 /* WORKING TIME DEFINITION */
 const int MINUTE = 60;
 const int HOUR = 60 * MINUTE;
@@ -17,7 +19,9 @@ const int PEAK_TIME_START = 12 * HOUR;
 const int PEAK_TIME_END = 13 * HOUR;
 
 /* OPERATIONS DURATIONS */
-// TODO
+
+const int TIME_TO_CHANGE_ZONE = 10;
+
 const int TIME_TO_SIT_L = 5;
 const int TIME_TO_SIT_H = 15;
 const int TIME_TO_SEARCH_ZONE_L = 10;
@@ -54,10 +58,10 @@ public:
 };
 
 class Zone {
-  std::vector<Waiter *> waiter;
-  std::vector<Store *> table;
+  vector<Waiter *> waiter;
+  vector<Store *> table;
 public:
-  Zone(int waiter_count, std::vector<int> tables_sizes){
+  Zone(int waiter_count, vector<int> tables_sizes){
     this->waiter.reserve(waiter_count);
     this->table.reserve(tables_sizes.size());
     for (int i : tables_sizes){
@@ -71,7 +75,7 @@ public:
       w->set_zone(this);
     }
   }
-  Store * find_table(int min_size);
+  Store * find_table(int min_size, bool force);
   Queue q;
 };
 
@@ -80,6 +84,5 @@ class Generator : public Event {
 };
 
 void init_zones();
-Zone * find_zone_with_table(int size);
 
 #endif // MAIN_H

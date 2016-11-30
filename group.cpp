@@ -1,4 +1,5 @@
 #include "group.hpp"
+using namespace std;
 
 void Group::Behavior(){
   for(int i = 0; i < END_ENUM; i++){
@@ -13,18 +14,8 @@ bool Group::set_phase(tPhase p){
     case ARRIVE:
       break;
     case LF_TABLE:
-      this->zone = find_zone_with_table(this->size);
-      /* When zone with suitable table was found, the group owns the thread
-         so they can aquire the table exclusivly
-      */
-      if (!this->zone){
-          // TODO: odchazi nebo se rozdeluji
-          std::cout << "/* Group didn't get table */" << std::endl;
-          return false;
-      }
-      this->table = this->zone->find_table(this->size);
-      Enter(*this->table, this->size);
-      break;
+      /* Looking for table */
+      return this->lf_table();
     case SITING:
       /* Taking a seat */
       Wait(Uniform(TIME_TO_SIT_L, TIME_TO_SIT_H));
@@ -38,7 +29,7 @@ bool Group::set_phase(tPhase p){
       break;
     case SOUP:
       /* Eating soup */
-      std::cerr << "/* POLIVKA */" << std::endl;
+      cerr << "/* POLIVKA */" << endl;
       Wait(Uniform(TIME_TO_EAT_SOUP_L,TIME_TO_EAT_SOUP_H));
       break;
     case WF_CLEAN:
@@ -57,7 +48,7 @@ bool Group::set_phase(tPhase p){
       break;
     case MEAL:
       /* Eating meal */
-      std::cerr << "/* HLAVNI CHOD */" << std::endl;
+      cerr << "/* HLAVNI CHOD */" << endl;
       Wait(Uniform(TIME_TO_EAT_MEAL_L,TIME_TO_EAT_MEAL_H));
       break;
     case WF_PAYMENT:
@@ -73,11 +64,44 @@ bool Group::set_phase(tPhase p){
       break;
     case LEAVING:
       /* Leaving the restaurant */
-      std::cerr << "/* ODCHAZI */" << std::endl;
+      cerr << "/* ODCHAZI */" << endl;
       Leave(*this->table, this->size);
       break;
     default:
       break;
   }
   return true;
+}
+
+bool Group::lf_table(){
+  this->zone = find_zone_with_table(false);
+  /* When zone with suitable table was found, the group owns the thread
+     so they can aquire the table exclusivly
+  */
+  bool force = false;
+  if (!this->zone){
+      // TODO: odchazi nebo se rozdeluji
+      cout << "/* Group didn't get free table*/" << endl;
+      this->zone = find_zone_with_table(this->size);
+      if (!this->zone){
+        cout << "/* Group couldn't join any table*/" << endl;
+        return false;
+      }
+      force = true;
+      cout << "/* Group joined taken table*/" << endl;
+  }
+  this->table = this->zone->find_table(this->size, force);
+  Enter(*this->table, this->size);
+  return true;
+}
+
+Zone * Group::find_zone_with_table(bool force){
+  vector<Zone *> zones_g(zones); // Create copy of zone pointers
+  random_shuffle(zones_g.begin(), zones_g.end()); //Walk in random order
+  for (Zone * z : zones_g){
+    Wait(TIME_TO_CHANGE_ZONE);
+    Store * s = z->find_table(this->size, force);
+    if(s) return z;
+  }
+  return NULL;
 }
