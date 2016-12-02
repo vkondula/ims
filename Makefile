@@ -1,7 +1,7 @@
 CXX=g++
 LDFLAGS=-lsimlib -lm
 
-SRCS=main.cpp group.cpp 
+SRCS=main.cpp group.cpp waiter.cpp 
 TARGET=ims
 
 all:

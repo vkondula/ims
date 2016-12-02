@@ -41,7 +41,8 @@ bool Group::set_phase(tPhase p){
       break;
     case WF_CLEAN:
       /* Wating for waiter to take away dishes (soup) */
-      this->get_zone()->q.Insert(this);
+      if (!this->is_wf_drink()) // Group is already once in queue
+        this->get_zone()->q.Insert(this);
       Passivate();
       Wait(TIME_TO_CLEAN * this->size);
       this->curr_waiter->Activate();
@@ -206,10 +207,6 @@ void Group::set_wf_drink(bool waits_for_drink){
   this->wf_drink = waits_for_drink;
 }
 
-void Group::set_skip_clean(){
-  this->skip_clean = true;
-}
-
 void Group::set_curr_waiter(Waiter * w){
   this->curr_waiter = w;
 }
@@ -220,8 +217,4 @@ bool Group::is_wf_drink(){
 
 int Group::get_group_size(){
   return this->size;
-}
-
-bool Group::get_skip_clean(){
-  return this->skip_clean;
 }

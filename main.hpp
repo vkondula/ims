@@ -8,6 +8,7 @@
 #include <time.h>
 #include <math.h>
 #include "simlib.h"
+#include "waiter.hpp"
 #include "group.hpp"
 using namespace std;
 
@@ -57,38 +58,13 @@ const double CHANCE_TO_ORDER_DRINK = 0.15;
 
 class Zone;
 class Group;
-
-class Waiter : public Process {
-  bool in_zone = false;
-  Zone * zone;
-  void Behavior();
-  void move(bool kitchen, bool slow);
-  bool is_in_zone();
-public:
-  Waiter(){ Activate(); }
-  void set_zone(Zone * z);
-  void handle_request(Group * group);
-  Zone * get_zone();
-};
+class Waiter;
 
 class Zone {
   vector<Waiter *> waiter;
   vector<Store *> table;
 public:
-  Zone(int waiter_count, vector<int> tables_sizes){
-    this->waiter.reserve(waiter_count);
-    this->table.reserve(tables_sizes.size());
-    for (int i : tables_sizes){
-      Store * t = new Store();
-      t->SetCapacity(i);
-      this->table.push_back(t);
-    }
-    for (int i = 0; i<waiter_count; i++){
-      Waiter * w = new Waiter();
-      this->waiter.push_back(w);
-      w->set_zone(this);
-    }
-  }
+  Zone(int waiter_count, vector<int> tables_sizes);
   void move();
   Store * find_table(int min_size, bool force);
   Queue q;

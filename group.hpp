@@ -22,13 +22,13 @@ enum tPhase : int {
 
 class Waiter;
 class Zone;
+class Group;
 extern vector<Zone *> zones;
 
 class Group : public Process {
   int size;
   bool timed;
   bool wf_drink = false;
-  bool skip_clean = false;
   vector<int> timestamps;
   tPhase phase;
   Zone * zone = NULL;
@@ -52,10 +52,8 @@ public:
   void set_table_in_zone(bool force);
   void set_wf_drink(bool waits_for_drink);
   void set_curr_waiter(Waiter * w);
-  void set_skip_clean();
   void find_zone_with_table(bool force);
   bool is_wf_drink();
-  bool get_skip_clean();
   int get_group_size();
   Store find_table();
   Group split_group();
