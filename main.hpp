@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 #include <time.h>
+#include <math.h>
 #include "simlib.h"
 #include "group.hpp"
 using namespace std;
@@ -32,7 +33,7 @@ const int TIME_TO_ORDER_L = 2;
 const int TIME_TO_ORDER_H = 7;
 
 const int TIME_TO_CLEAN = 3;
-const int TIME_TO_SERVER_MEAL = 4;
+const int TIME_TO_SERVE_MEAL = 4;
 
 const int TIME_TO_EAT_MEAL_L = 5 * MINUTE;
 const int TIME_TO_EAT_MEAL_H = 10 * MINUTE;
@@ -42,7 +43,13 @@ const int TIME_TO_EAT_SOUP_H = 7 * MINUTE;
 const int TIME_TO_PAY_L = 10;
 const int TIME_TO_PAY_H = 20;
 
+const int TIME_TO_KITCHEN = 10;
+const int TIME_TO_TABLE = 5;
+
 const double CHANCE_TO_LEAVE = 0.4;
+const double CHANCE_TO_JOIN = 0.8;
+const double CHANCE_TO_ORDER_DRINK = 0.15;
+
 
 
 /* ENVIRONMENT DESCRIPTION */
@@ -52,11 +59,16 @@ class Zone;
 class Group;
 
 class Waiter : public Process {
+  bool in_zone = false;
   Zone * zone;
   void Behavior();
+  void move(bool kitchen, bool slow);
+  bool is_in_zone();
 public:
   Waiter(){ Activate(); }
   void set_zone(Zone * z);
+  void handle_request(Group * group);
+  Zone * get_zone();
 };
 
 class Zone {
@@ -77,6 +89,7 @@ public:
       w->set_zone(this);
     }
   }
+  void move();
   Store * find_table(int min_size, bool force);
   Queue q;
   Queue priority_q;

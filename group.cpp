@@ -23,9 +23,15 @@ bool Group::set_phase(tPhase p){
       break;
     case WF_ORDER:
       /* Waiting for soup and order */
-      this->zone->q.Insert(this);
+      this->get_zone()->q.Insert(this);
       Passivate();
       Wait(TIME_TO_ORDER_GENERAL + Uniform(TIME_TO_ORDER_L, TIME_TO_ORDER_H) * this->size);
+      /* Every person has 15% chance to order drink, event happens when at least one orders*/
+      if (pow(1-CHANCE_TO_ORDER_DRINK, this->size) <= Random()){
+        /* Asynchronously waiting for drink */
+        this->set_wf_drink(true);
+        this->get_zone()->q.Insert(this);
+      }
       this->curr_waiter->Activate();
       break;
     case SOUP:
@@ -35,16 +41,16 @@ bool Group::set_phase(tPhase p){
       break;
     case WF_CLEAN:
       /* Wating for waiter to take away dishes (soup) */
-      this->zone->q.Insert(this);
+      this->get_zone()->q.Insert(this);
       Passivate();
       Wait(TIME_TO_CLEAN * this->size);
       this->curr_waiter->Activate();
       break;
     case WF_MEAL:
       /* Waiting for meal */
-      this->zone->q.Insert(this);
+      this->get_zone()->q.Insert(this);
       Passivate();
-      Wait(TIME_TO_SERVER_MEAL * this->size);
+      Wait(TIME_TO_SERVE_MEAL * this->size);
       this->curr_waiter->Activate();
       break;
     case MEAL:
@@ -54,7 +60,7 @@ bool Group::set_phase(tPhase p){
       break;
     case WF_PAYMENT:
       /* Wating for waiter to take away dishes (meal) and pay */
-      this->zone->priority_q.Insert(this);
+      this->get_zone()->priority_q.Insert(this);
       Passivate();
       break;
     case PAYING:
@@ -75,7 +81,7 @@ bool Group::set_phase(tPhase p){
         }
       }
       cerr << "/* ODCHAZI */" << endl;
-      Leave(*this->table, this->size);
+      Leave(*this->get_table(), this->size);
       break;
     default:
       break;
@@ -92,6 +98,7 @@ bool Group::lf_table(){
   bool force = false;
   if (!this->get_zone()){
     /* Group didn't get free table, tries to join someone */
+    if (Random() >= CHANCE_TO_JOIN) return false; // Group leaves immediately
     force = true;
     cout << "/* Group didn't get free table*/" << endl;
     this->find_zone_with_table(true);
@@ -193,4 +200,28 @@ void Group::set_zone(Zone * zone){
 
 void Group::set_table_in_zone(bool force){
   this->table = this->get_zone()->find_table(this->size, force);
+}
+
+void Group::set_wf_drink(bool waits_for_drink){
+  this->wf_drink = waits_for_drink;
+}
+
+void Group::set_skip_clean(){
+  this->skip_clean = true;
+}
+
+void Group::set_curr_waiter(Waiter * w){
+  this->curr_waiter = w;
+}
+
+bool Group::is_wf_drink(){
+  return this->wf_drink;
+}
+
+int Group::get_group_size(){
+  return this->size;
+}
+
+bool Group::get_skip_clean(){
+  return this->skip_clean;
 }
