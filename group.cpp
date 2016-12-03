@@ -4,13 +4,13 @@ using namespace std;
 void Group::Behavior(){
   for(int i = 0; i < END_ENUM; i++){
     this->timestamps.push_back(Time); //Save Beginning
-    if(!this->set_phase((tPhase)i)) break;
+    if(!this->do_phase((tPhase)i)) break;
     this->timestamps.push_back(Time); //Save End
   }
 }
 
-bool Group::set_phase(tPhase p){
-  this->phase = p;
+bool Group::do_phase(tPhase p){
+  this->set_phase(p);
   switch (p) {
     case ARRIVE:
       break;
@@ -26,6 +26,7 @@ bool Group::set_phase(tPhase p){
       this->get_zone()->q.Insert(this);
       Passivate();
       Wait(TIME_TO_ORDER_GENERAL + Uniform(TIME_TO_ORDER_L, TIME_TO_ORDER_H) * this->size);
+      this->generate_order();
       /* Every person has 15% chance to order drink, event happens when at least one orders*/
       if (pow(1-CHANCE_TO_ORDER_DRINK, this->size) <= Random()){
         /* Asynchronously waiting for drink */
@@ -217,4 +218,19 @@ bool Group::is_wf_drink(){
 
 int Group::get_group_size(){
   return this->size;
+}
+
+void Group::generate_order(){
+  this->order.assign(MENUES, 0);
+  for (int i = 0; i < this->size; i++){
+    this->order[(int)(Random() * MENUES)]++;
+  }
+}
+
+vector<int> * Group::get_order(){
+  return &(this->order);
+}
+
+void Group::set_phase(tPhase p){
+  this->phase = p;
 }

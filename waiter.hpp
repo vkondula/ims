@@ -7,12 +7,15 @@ using namespace std;
 class Zone;
 class Waiter;
 class Group;
+class Kitchen;
+
+extern Kitchen * kitchen;
 
 class Waiter : public Process {
   bool in_zone = false;
   Zone * zone;
   void Behavior();
-  void move(bool kitchen, bool slow);
+  void move(bool to_kitchen, bool slow);
   bool is_in_zone();
 public:
   Waiter(){ Activate(); }

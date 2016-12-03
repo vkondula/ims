@@ -10,6 +10,7 @@
 #include "simlib.h"
 #include "waiter.hpp"
 #include "group.hpp"
+#include "kitchen.hpp"
 using namespace std;
 
 /* WORKING TIME DEFINITION */
@@ -47,14 +48,15 @@ const int TIME_TO_PAY_H = 20;
 const int TIME_TO_KITCHEN = 10;
 const int TIME_TO_TABLE = 5;
 
+const int TIME_TO_PREPARE_MEAL = 20;
+const int TIME_TO_PREPARE_SOUP = 8;
+
 const double CHANCE_TO_LEAVE = 0.4;
 const double CHANCE_TO_JOIN = 0.8;
 const double CHANCE_TO_ORDER_DRINK = 0.15;
 
-
-
 /* ENVIRONMENT DESCRIPTION */
-// TODO
+const int MENUES = 4;
 
 class Zone;
 class Group;

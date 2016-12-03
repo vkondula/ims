@@ -9,6 +9,7 @@ Authors:
 
 using namespace std;
 vector<Zone *> zones;
+Kitchen * kitchen;
 
 int main() {
   RandomSeed(time(NULL));
@@ -55,6 +56,8 @@ void init_zones(){
   zones.reserve(2);
   zones.push_back(zone1);
   zones.push_back(zone2);
+  kitchen = new Kitchen(2);
+  kitchen->activate_cooks();
   return;
 }
 

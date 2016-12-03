@@ -18,6 +18,8 @@ enum tPhase : int {
   PAYING,
   LEAVING,
   END_ENUM,
+  PRIORITY_SOUP,
+  PRIORITY_MEAL,
 };
 
 class Waiter;
@@ -30,12 +32,14 @@ class Group : public Process {
   bool timed;
   bool wf_drink = false;
   vector<int> timestamps;
+  vector<int> order;
   tPhase phase;
   Zone * zone = NULL;
   Store * table = NULL;
   Group * dependent_group = NULL;
   void Behavior();
-  bool set_phase(tPhase p);
+  void generate_order();
+  bool do_phase(tPhase p);
   bool lf_table();
   Group * group_split();
 public:
@@ -53,8 +57,10 @@ public:
   void set_wf_drink(bool waits_for_drink);
   void set_curr_waiter(Waiter * w);
   void find_zone_with_table(bool force);
+  void set_phase(tPhase p);
   bool is_wf_drink();
   int get_group_size();
+  vector<int> * get_order();
   Store find_table();
   Group split_group();
   tPhase get_phase();

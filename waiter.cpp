@@ -29,10 +29,10 @@ bool Waiter::is_in_zone(){
   return this->in_zone;
 }
 
-void Waiter::move(bool kitchen, bool slow=false){
-  int duration = (kitchen ? TIME_TO_KITCHEN : TIME_TO_TABLE);
+void Waiter::move(bool to_kitchen, bool slow=false){
+  int duration = (to_kitchen ? TIME_TO_KITCHEN : TIME_TO_TABLE);
   if (slow) duration = (int)(duration * 1.5);
-  if (kitchen) this->in_zone = !(this->in_zone);
+  if (to_kitchen) this->in_zone = !(this->in_zone);
   Wait(duration);
 }
 
@@ -46,9 +46,12 @@ void Waiter::handle_request(Group * group){
     case WF_ORDER:
     case WF_MEAL:
     case SOUP:
-    case END_ENUM:
+    case END_ENUM: // CLEANING + BRINGING DRING TOGETHER
+    case PRIORITY_SOUP: // PENDING SOUP SENT BY KITCHEN
+    case PRIORITY_MEAL: // PENDING MEAL SENT BY KITCHEN
       /* Need to bring something from kitchen (food / dring)*/
       if (this->is_in_zone()) this->move(true); // Go to kitchen (fast)
+      if (!kitchen->get_order_wrapper(group)) return; // Order is not ready, kitchen is taking control
       this->move(true, true); // Go back with plates (slow)
       this->move(false, true); // Go to the table with plates (slow)
       break;
@@ -79,6 +82,11 @@ void Waiter::handle_request(Group * group){
     case END_ENUM:
       /* Need to take away something to kitchen (dishes) */
       this->move(true, true);
+      break;
+    case WF_ORDER:
+    case PRIORITY_SOUP:
+      /* forward order to the kitchen */
+      this->move(true, false);
       break;
     default:
       /* Leave table */
