@@ -8,15 +8,28 @@ Authors:
 #include "main.hpp"
 
 using namespace std;
+using json = nlohmann::json;
 vector<Zone *> zones;
 Kitchen * kitchen;
 
-int main() {
+int main(int argc, char* argv[]) {
+  /* seed - get from current time  */
   RandomSeed(time(NULL));
   srand(time(NULL));
-  SetOutput("output.out");
+  /* parse argument */
+  json args = parse_arguments(argc, argv);
+  /* set output file */
+  try{
+    const string output_str = args["output_file"];
+    SetOutput(output_str.c_str());
+  }
+  catch (domain_error){
+    cout << "Invalid JSON data" << '\n';
+    exit(1);
+  }
   Init(TIME_BEGIN, TIME_END + 3 * HOUR);
-  init_zones();
+  /* setup zones and files based on input json */
+  init_zones(args);
   (new Generator)->Activate();
   Run();
   return 0;
@@ -26,7 +39,7 @@ void Generator::Behavior(){
   if(Time < TIME_END){
 
     if (Time > PEAK_TIME_START && Time < PEAK_TIME_END){ // more people comming
-        Activate(Time + Exponential(MINUTE));
+      Activate(Time + Exponential(MINUTE));
     }else{
       Activate(Time + Exponential(2 * MINUTE));
     }
@@ -46,21 +59,70 @@ void Generator::Behavior(){
   }
 }
 
-
-void init_zones(){
-  //CHANGE!!
-  vector<int> t1 = {4,4,4,4,6};
-  vector<int> t2 = {2,2,2,4,8};
-  Zone * zone1 = new Zone(1, t1);
-  Zone * zone2 = new Zone(2, t2);
-  zones.reserve(2);
-  zones.push_back(zone1);
-  zones.push_back(zone2);
-  kitchen = new Kitchen(2);
+void init_zones(json args){
+  try{
+    int cooks = args["cooks"];
+    // iterate the zones
+    for (json::iterator it = args["zones"].begin(); it != args["zones"].end(); ++it) {
+      Zone * zone = new Zone((*it)["waiters"], (*it)["tables"]);
+      zones.push_back(zone);
+    }
+    kitchen = new Kitchen(cooks);
+  }
+  catch (domain_error){
+    cout << "Invalid JSON data" << '\n';
+    exit(1);
+  }
   kitchen->activate_cooks();
   return;
 }
 
+
+json parse_arguments(int argc, char* argv[]){
+  if(argc == 2 && !strcmp(argv[1], "--help")){
+      cout << "Simulation model of a restaurant" << endl;
+      cout << "./ims [INPUTFILE, [OUTPUTFILE]]" << endl;
+      cout << "Usage:" << endl;
+      cout << "  No parameters: imlicit number of waiters, tables, zones and cooks" << endl;
+      cout << "  INPUTFILE: set json file, that specifies environment (see examples)" << endl;
+      cout << "  OUTPUTFILE: set output file for simulation data" << endl;
+      exit(0);
+  }
+  json args = {
+    {"cooks", 2},
+    {"output_file", "output.out"},
+    {"zones", {
+        {
+          {"tables", {2,2,4,8,8}},
+          {"waiters", 2}
+        },
+        {
+          {"tables", {4,6,6}},
+          {"waiters", 1}
+        }
+      }
+    }
+  };
+  if (argc > 1){
+    ifstream input_file (argv[1]);
+    if (!input_file.is_open()){
+      cerr << "Couldn't open input file" << endl;
+      exit(1);
+    }
+    try{
+      args = json::parse(input_file);
+    }
+    catch (invalid_argument){
+      cout << "Invalid JSON format" << '\n';
+      exit(1);
+    }
+  }
+  if (argc == 3){
+    args["output_file"] = argv[2];
+  }
+  std::cout << args << std::endl;
+  return args;
+}
 
 Store * Zone::find_table(int size, bool force){
   vector<Store *> table_g(this->table); // Create copy of table pointers

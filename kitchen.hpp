@@ -24,8 +24,8 @@ class Kitchen {
   vector<int> meals;
   Queue q;
   int soups = 0;
-  int soup_max = 15;
-  int meal_max = 6;
+  int soup_max;
+  int meal_max;
   bool get_meals(Group * group);
   bool get_soups(Group * group);
 public:

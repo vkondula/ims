@@ -6,6 +6,8 @@ Kitchen::Kitchen(int cooks){
     this->cook.push_back(new Cook());
   }
   this->meals.assign(MENUES, 0);
+  this->meal_max = STACK_MEALS;
+  this->soup_max = STACK_SOUPS;
 }
 
 bool Kitchen::get_meals(Group * group){

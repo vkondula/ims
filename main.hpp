@@ -7,10 +7,12 @@
 #include <vector>
 #include <time.h>
 #include <math.h>
+#include <fstream>
 #include "simlib.h"
 #include "waiter.hpp"
 #include "group.hpp"
 #include "kitchen.hpp"
+#include "external_lib/json.hpp"
 using namespace std;
 
 /* WORKING TIME DEFINITION */
@@ -57,6 +59,8 @@ const double CHANCE_TO_ORDER_DRINK = 0.15;
 
 /* ENVIRONMENT DESCRIPTION */
 const int MENUES = 4;
+const int STACK_MEALS = 3;
+const int STACK_SOUPS = 10;
 
 class Zone;
 class Group;
@@ -77,6 +81,7 @@ class Generator : public Event {
     void Behavior();
 };
 
-void init_zones();
+nlohmann::json parse_arguments(int argc, char* argv[]);
+void init_zones(nlohmann::json args);
 
 #endif // MAIN_H
