@@ -5,6 +5,7 @@
 #include "main.hpp"
 using namespace std;
 
+
 enum tPhase : int {
   ARRIVE,
   LF_TABLE,
@@ -25,13 +26,15 @@ enum tPhase : int {
 class Waiter;
 class Zone;
 class Group;
+class Statistics;
 extern vector<Zone *> zones;
+extern Statistics * stat;
 
 class Group : public Process {
   int size;
   bool timed;
   bool wf_drink = false;
-  vector<int> timestamps;
+  vector<double> timestamps;
   vector<int> order;
   tPhase phase;
   Zone * zone = NULL;
@@ -39,6 +42,7 @@ class Group : public Process {
   Group * dependent_group = NULL;
   void Behavior();
   void generate_order();
+  void calculate_time();
   bool do_phase(tPhase p);
   bool lf_table();
   Group * group_split();
@@ -47,7 +51,6 @@ public:
     this->size = size;
     this->timestamps.reserve(END_ENUM * 2);
     this->quick_sit(false);
-    cout << "Group with "<< size <<" members arrived at: " << Time << "\n";
   }
   Waiter * curr_waiter;
   void quick_sit(bool t);

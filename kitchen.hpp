@@ -6,6 +6,8 @@ using namespace std;
 
 class Group;
 class Kitchen;
+class Statistics;
+extern Statistics * stat;
 
 extern Kitchen * kitchen;
 

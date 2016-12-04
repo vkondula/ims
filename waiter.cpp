@@ -68,7 +68,6 @@ void Waiter::handle_request(Group * group){
     //only asynchronous action, no need for group co-operation
     group->set_wf_drink(false);
     Wait(TIME_TO_SERVE_MEAL);
-    std::cerr << "/* DRINK SERVED */"<< phase << std::endl;
     return;
   } else {
     // These actions are handled by Group

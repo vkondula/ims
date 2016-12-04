@@ -9,8 +9,10 @@ Authors:
 
 using namespace std;
 using json = nlohmann::json;
+
 vector<Zone *> zones;
 Kitchen * kitchen;
+Statistics * stat;
 
 int main(int argc, char* argv[]) {
   /* seed - get from current time  */
@@ -24,14 +26,15 @@ int main(int argc, char* argv[]) {
     SetOutput(output_str.c_str());
   }
   catch (domain_error){
-    cout << "Invalid JSON data" << '\n';
-    exit(1);
+    SetOutput("output.out");
   }
+  stat = new Statistics();
   Init(TIME_BEGIN, TIME_END + 3 * HOUR);
   /* setup zones and files based on input json */
   init_zones(args);
   (new Generator)->Activate();
   Run();
+  stat->Output();
   return 0;
 }
 
@@ -70,7 +73,7 @@ void init_zones(json args){
     kitchen = new Kitchen(cooks);
   }
   catch (domain_error){
-    cout << "Invalid JSON data" << '\n';
+    cerr << "Invalid JSON data" << '\n';
     exit(1);
   }
   kitchen->activate_cooks();
@@ -113,14 +116,13 @@ json parse_arguments(int argc, char* argv[]){
       args = json::parse(input_file);
     }
     catch (invalid_argument){
-      cout << "Invalid JSON format" << '\n';
+      cerr << "Invalid JSON format" << '\n';
       exit(1);
     }
   }
   if (argc == 3){
     args["output_file"] = argv[2];
   }
-  std::cout << args << std::endl;
   return args;
 }
 
@@ -144,7 +146,10 @@ Store * Zone::find_table(int size, bool force){
   return table;
 }
 
+int ZONE_COUNTER=1;
+
 Zone::Zone(int waiter_count, vector<int> tables_sizes){
+  this->id=ZONE_COUNTER++;
   this->waiter.reserve(waiter_count);
   this->table.reserve(tables_sizes.size());
   for (int i : tables_sizes){

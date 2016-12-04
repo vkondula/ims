@@ -3,9 +3,7 @@ using namespace std;
 
 void Group::Behavior(){
   for(int i = 0; i < END_ENUM; i++){
-    this->timestamps.push_back(Time); //Save Beginning
     if(!this->do_phase((tPhase)i)) break;
-    this->timestamps.push_back(Time); //Save End
   }
 }
 
@@ -13,6 +11,7 @@ bool Group::do_phase(tPhase p){
   this->set_phase(p);
   switch (p) {
     case ARRIVE:
+      this->timestamps.push_back(Time); //Save Beginning
       break;
     case LF_TABLE:
       /* Looking for table */
@@ -24,7 +23,9 @@ bool Group::do_phase(tPhase p){
     case WF_ORDER:
       /* Waiting for soup and order */
       this->get_zone()->q.Insert(this);
+      this->timestamps.push_back(Time);
       Passivate();
+      this->timestamps.push_back(Time);
       Wait(TIME_TO_ORDER_GENERAL + Uniform(TIME_TO_ORDER_L, TIME_TO_ORDER_H) * this->size);
       this->generate_order();
       /* Every person has 15% chance to order drink, event happens when at least one orders*/
@@ -37,33 +38,37 @@ bool Group::do_phase(tPhase p){
       break;
     case SOUP:
       /* Eating soup */
-      cerr << "/* POLIVKA */" << endl;
       Wait(Uniform(TIME_TO_EAT_SOUP_L,TIME_TO_EAT_SOUP_H));
       break;
     case WF_CLEAN:
       /* Wating for waiter to take away dishes (soup) */
       if (!this->is_wf_drink()) // Group is already once in queue
         this->get_zone()->q.Insert(this);
+      this->timestamps.push_back(Time);
       Passivate();
+      this->timestamps.push_back(Time);
       Wait(TIME_TO_CLEAN * this->size);
       this->curr_waiter->Activate();
       break;
     case WF_MEAL:
       /* Waiting for meal */
       this->get_zone()->q.Insert(this);
+      this->timestamps.push_back(Time);
       Passivate();
+      this->timestamps.push_back(Time);
       Wait(TIME_TO_SERVE_MEAL * this->size);
       this->curr_waiter->Activate();
       break;
     case MEAL:
       /* Eating meal */
-      cerr << "/* HLAVNI CHOD */" << endl;
       Wait(Uniform(TIME_TO_EAT_MEAL_L,TIME_TO_EAT_MEAL_H));
       break;
     case WF_PAYMENT:
       /* Wating for waiter to take away dishes (meal) and pay */
       this->get_zone()->priority_q.Insert(this);
+      this->timestamps.push_back(Time);
       Passivate();
+      this->timestamps.push_back(Time);
       break;
     case PAYING:
       /* Paying and taking away the dishes */
@@ -73,6 +78,8 @@ bool Group::do_phase(tPhase p){
       break;
     case LEAVING:
       /* Leaving the restaurant */
+      this->timestamps.push_back(Time);
+      this->calculate_time();
       if (this->get_dependent_group()){
         if (this->get_dependent_group()->get_phase() == LEAVING){
           /* Ping second group so they can leave together */
@@ -82,7 +89,6 @@ bool Group::do_phase(tPhase p){
           Passivate();
         }
       }
-      cerr << "/* ODCHAZI */" << endl;
       Leave(*this->get_table(), this->size);
       break;
     default:
@@ -93,6 +99,7 @@ bool Group::do_phase(tPhase p){
 
 bool Group::lf_table(){
   if (this->get_table()) return true;
+  stat->add_group_count(this->size);
   this->find_zone_with_table(false);
   /* When zone with suitable table was found, the group owns the thread
      so they can aquire the table exclusivly
@@ -100,12 +107,13 @@ bool Group::lf_table(){
   bool force = false;
   if (!this->get_zone()){
     /* Group didn't get free table, tries to join someone */
+    stat->add_group_no_own_table(this->size);
     if (Random() >= CHANCE_TO_JOIN) return false; // Group leaves immediately
     force = true;
-    cout << "/* Group didn't get free table*/" << endl;
     this->find_zone_with_table(true);
     if (!this->get_zone()){
-      cout << "/* Group couldn't join any table*/" << endl;
+      /* Group couldn't join any table*/
+      stat->add_group_join_failed(this->size);
       if (this->size < 5) return false; // Small group leaves right away
       if (Random() <= CHANCE_TO_LEAVE) return false; // Big group might leave
       /* Group spliting up and searches for tables */
@@ -118,26 +126,27 @@ bool Group::lf_table(){
         second_g->find_zone_with_table(true);
         if (second_g->get_zone()){
           // Second group got table as well, aquires it
+          stat->add_group_splited(this->size);
           second_g->set_table_in_zone(force);
           Enter(*second_g->get_table(), second_g->size);
           second_g->Activate();
-          cerr << "/* Second group OK */" << endl;
           return true;
         } else {
           // Second group did't get table, so first group leaves as well
-          cerr << "/* Second group FAIL */" << endl;
+          stat->add_group_split_failed(this->size);
           Leave(*this->get_table(), this->size);
           delete second_g;
           return false;
         }
       } else {
         // First group didn't get table so both groups leaves
-        cerr << "/* FIRST group FAIL */" << endl;
+        stat->add_group_split_failed(this->size);
         delete second_g;
         return false;
       }
     }
-    cout << "/* Group joined taken table*/" << endl;
+    /* Group joined taken table*/
+    stat->add_group_joined(this->size);
   }
   this->set_table_in_zone(force);
   Enter(*this->get_table(), this->size);
@@ -233,4 +242,14 @@ vector<int> * Group::get_order(){
 
 void Group::set_phase(tPhase p){
   this->phase = p;
+}
+
+void Group::calculate_time(){
+  double time_wait = 0;
+  for (int i = 1; i < 9; i=i+2){
+    time_wait += this->timestamps[i+1] - this->timestamps[i];
+  }
+  double time_total = this->timestamps[9] - this->timestamps[0];
+  stat->add_time_in_system(time_total);
+  stat->add_waiting(time_wait);
 }

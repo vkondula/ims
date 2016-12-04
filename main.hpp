@@ -12,6 +12,7 @@
 #include "waiter.hpp"
 #include "group.hpp"
 #include "kitchen.hpp"
+#include "stats.hpp"
 #include "external_lib/json.hpp"
 using namespace std;
 
@@ -69,6 +70,7 @@ class Waiter;
 class Zone {
   vector<Waiter *> waiter;
   vector<Store *> table;
+  int id;
 public:
   Zone(int waiter_count, vector<int> tables_sizes);
   void move();

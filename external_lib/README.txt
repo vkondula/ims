@@ -1,5 +1,6 @@
-The `JSON for Modern C++` library was used by MIT Licence, that you can find
-at the very beginning of the source file `json.hpp`.
+The `JSON for Modern C++` library was used by the termes specified in
+the MIT Licence, that you can find at the very beginning of the
+source file `json.hpp`.
 
 We neither own nor wrote any part of `json.hpp`.
 

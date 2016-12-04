@@ -54,6 +54,7 @@ void Cook::Behavior(){
   while (true){
     if (!kitchen->q.Empty()){
       /* Some order was not satisfied, has priority */
+      stat->add_kitchen_took_order(1);
       Group * group = (Group *)kitchen->q.GetFirst();
       if (group->get_phase() == WF_ORDER){
         /* Need more soup */
