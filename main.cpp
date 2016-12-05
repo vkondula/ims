@@ -50,14 +50,14 @@ void Generator::Behavior(){
     double pick_group = Random();//TODO: change weights
     int member_count = 0;
 
-    if (pick_group > 0 && pick_group <= 0.1)            member_count=1;
-    if (pick_group > 0.1 && pick_group <= 0.4)          member_count=2;
-    if (pick_group > 0.4 && pick_group <= 0.5)          member_count=3;
-    if (pick_group > 0.5 && pick_group <= 0.7)          member_count=4;
-    if (pick_group > 0.7 && pick_group <= 0.8)          member_count=5;
-    if (pick_group > 0.8 && pick_group <= 0.85)         member_count=6;
-    if (pick_group > 0.85 && pick_group <= 0.9)         member_count=7;
-    if (pick_group > 0.90 && pick_group <= 1)           member_count=8;
+    if (pick_group > 0    && pick_group <= 0.08)            member_count=1;
+    if (pick_group > 0.08 && pick_group <= 0.44)         member_count=2;
+    if (pick_group > 0.44 && pick_group <= 0.57)          member_count=3;
+    if (pick_group > 0.57 && pick_group <= 0.83)          member_count=4;
+    if (pick_group > 0.83 && pick_group <= 0.9)          member_count=5;
+    if (pick_group > 0.9  && pick_group <= 0.95)         member_count=6;
+    if (pick_group > 0.95 && pick_group <= 0.98)         member_count=7;
+    if (pick_group > 0.98 && pick_group <= 1)           member_count=8;
     Group * new_group = new Group(member_count);
     new_group->Activate();
   }
