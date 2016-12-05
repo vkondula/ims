@@ -48,11 +48,11 @@ const int TIME_TO_EAT_SOUP_H = 7 * MINUTE;
 const int TIME_TO_PAY_L = 10;
 const int TIME_TO_PAY_H = 20;
 
-const int TIME_TO_KITCHEN = 13;
-const int TIME_TO_TABLE = 6;
-const int TIME_TO_IN_KITCHEN_PER_SERVING = 4;
+const int TIME_TO_KITCHEN = 14;
+const int TIME_TO_TABLE = 7;
+const int TIME_TO_IN_KITCHEN_PER_SERVING = 5;
 
-const int TIME_TO_PREPARE_MEAL = 20;
+const int TIME_TO_PREPARE_MEAL = 23;
 const int TIME_TO_PREPARE_SOUP = 8;
 
 const double CHANCE_TO_LEAVE = 0.4;

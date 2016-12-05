@@ -90,12 +90,15 @@ void Statistics::Output(){
   avg_m = minutes(avg);
   Print("  Čas volna na kuchaře: %d:%02dmin\n", avg_m, avg_s);
   for (Zone * z : zones){
-    avg = z->waiter_waiting.Sum() / z->get_waiter_count();
+    avg = z->waiter_waiting.Sum();
     avg_s = seconds(avg);
     avg_m = minutes(avg);
     Print("Zóna číslo: %d\n", z->get_id());
     Print("  Počet číšníků: %d\n", z->get_waiter_count());
     Print("  Celkový čas volna: %d:%02dmin\n", avg_m, avg_s);
+    avg = z->waiter_waiting.Sum() / z->get_waiter_count();
+    avg_s = seconds(avg);
+    avg_m = minutes(avg);
     Print("  Čas volna na číšníka: %d:%02dmin\n", avg_m, avg_s);
   }
 
