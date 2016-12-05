@@ -1,0 +1,26 @@
+{
+  "cooks":1,
+  "output_file":"output.out",
+  "zones": [
+    {
+      "tables" : [2,2,4,4,8],
+      "waiters": 1
+    },
+    {
+      "tables" : [2,2,2,2,4,4,4],
+      "waiters": 1
+    },
+    {
+      "tables" : [4,4,4,4,4,6,8,8],
+      "waiters": 1
+    },
+    {
+      "tables" : [4,4,4,4,8],
+      "waiters": 1
+    },
+    {
+      "tables" : [4,4,4,4],
+      "waiters": 1
+    }
+  ]
+}
