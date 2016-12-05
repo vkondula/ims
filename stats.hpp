@@ -4,6 +4,11 @@
 #include "main.hpp"
 using namespace std;
 
+class Zone;
+class Kitchen;
+extern vector<Zone *> zones;
+extern Kitchen * kitchen;
+
 class Statistics {
   Stat group_count; // All groups that arrived
   Stat group_no_own_table; // Failed to get own table
@@ -14,9 +19,11 @@ class Statistics {
   Stat kitchen_took_order; // Order was not satisfied
   Stat waiting; // waiting for waiter (not eating or anything)
   Stat time_in_system;
-  Stat waiter_no_queue; // COUNT ONLY WHILE GROUPS ARE COMING!
+  Stat cook_no_queue;
 public:
-  Statistics() : waiting("Čas čekání"), time_in_system("Celkový čas v restauraci"){}
+  Statistics(){
+
+  }
   void Output();
   /* group numbers */
   void add_group_count(int group_size);
@@ -29,7 +36,8 @@ public:
   /* time info */
   void add_time_in_system(double duration);
   void add_waiting(double duration);
-  void add_waiter_no_queue(double duration);
+  void add_waiter_no_queue(Zone * z, double duration);
+  void add_cook_no_queue(double duration);
 };
 
 int minutes(int value);

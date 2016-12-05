@@ -8,7 +8,10 @@ void Waiter::Behavior(){
       else if (!this->get_zone()->q.Empty()) q = &(this->get_zone()->q);
       else {
         /* Wait for next request */
-        Wait(10);
+        double time_wait = 10;
+        if (Time < TIME_END)
+          stat->add_waiter_no_queue(this->zone, time_wait);
+        Wait(time_wait);
         continue;
       }
       Group * group = (Group *) q->GetFirst();
@@ -33,7 +36,7 @@ void Waiter::move(bool to_kitchen, bool slow=false){
   int duration = (to_kitchen ? TIME_TO_KITCHEN : TIME_TO_TABLE);
   if (slow) duration = (int)(duration * 1.5);
   if (to_kitchen) this->in_zone = !(this->in_zone);
-  Wait(duration);
+  Wait(Exponential(duration));
 }
 
 void Waiter::handle_request(Group * group){
@@ -52,6 +55,7 @@ void Waiter::handle_request(Group * group){
       /* Need to bring something from kitchen (food / dring)*/
       if (this->is_in_zone()) this->move(true); // Go to kitchen (fast)
       if (!kitchen->get_order_wrapper(group)) return; // Order is not ready, kitchen is taking control
+      this->prepare(group->get_group_size());
       this->move(true, true); // Go back with plates (slow)
       this->move(false, true); // Go to the table with plates (slow)
       break;
@@ -89,7 +93,12 @@ void Waiter::handle_request(Group * group){
       break;
     default:
       /* Leave table */
-      Wait(2);
+      Wait(Exponential(3));
       break;
   }
+}
+
+
+void Waiter::prepare(int size){
+  Wait(Exponential(TIME_TO_IN_KITCHEN_PER_SERVING * size));
 }

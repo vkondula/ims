@@ -48,8 +48,9 @@ const int TIME_TO_EAT_SOUP_H = 7 * MINUTE;
 const int TIME_TO_PAY_L = 10;
 const int TIME_TO_PAY_H = 20;
 
-const int TIME_TO_KITCHEN = 10;
-const int TIME_TO_TABLE = 5;
+const int TIME_TO_KITCHEN = 13;
+const int TIME_TO_TABLE = 6;
+const int TIME_TO_IN_KITCHEN_PER_SERVING = 4;
 
 const int TIME_TO_PREPARE_MEAL = 20;
 const int TIME_TO_PREPARE_SOUP = 8;
@@ -73,10 +74,14 @@ class Zone {
   int id;
 public:
   Zone(int waiter_count, vector<int> tables_sizes);
-  void move();
   Store * find_table(int min_size, bool force);
   Queue q;
   Queue priority_q;
+  Stat waiter_waiting;
+  void move();
+  void waiter_no_queue(double duration);
+  int get_id();
+  int get_waiter_count();
 };
 
 class Generator : public Event {

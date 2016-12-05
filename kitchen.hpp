@@ -7,8 +7,8 @@ using namespace std;
 class Group;
 class Kitchen;
 class Statistics;
-extern Statistics * stat;
 
+extern Statistics * stat;
 extern Kitchen * kitchen;
 
 class Cook : public Process {
@@ -34,6 +34,7 @@ public:
   Kitchen(int cooks);
   bool get_order_wrapper(Group * group);
   void activate_cooks();
+  int get_cook_count();
 };
 
 #endif // KITCHEN_H

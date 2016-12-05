@@ -78,7 +78,26 @@ void Statistics::Output(){
   Print("| Práce zaměstnanců                                                |\n");
   Print("+------------------------------------------------------------------+\n");
   gn = this->kitchen_took_order.Number();
-  Print("Objednávka nebyla připravena na čas: %d\n", gn);
+  Print("Kuchyně\n");
+  Print("  Počet kuchařů: %d\n", (int)kitchen->get_cook_count());
+  Print("  Objednávky nepřipravené na čas: %d\n", gn);
+  avg = this->cook_no_queue.Sum();
+  avg_s = seconds(avg);
+  avg_m = minutes(avg);
+  Print("  Celkový čas volna: %d:%02dmin\n", avg_m, avg_s);
+  avg = this->cook_no_queue.Sum() / (int)kitchen->get_cook_count();
+  avg_s = seconds(avg);
+  avg_m = minutes(avg);
+  Print("  Čas volna na kuchaře: %d:%02dmin\n", avg_m, avg_s);
+  for (Zone * z : zones){
+    avg = z->waiter_waiting.Sum() / z->get_waiter_count();
+    avg_s = seconds(avg);
+    avg_m = minutes(avg);
+    Print("Zóna číslo: %d\n", z->get_id());
+    Print("  Počet číšníků: %d\n", z->get_waiter_count());
+    Print("  Celkový čas volna: %d:%02dmin\n", avg_m, avg_s);
+    Print("  Čas volna na číšníka: %d:%02dmin\n", avg_m, avg_s);
+  }
 
 }
 
@@ -118,8 +137,12 @@ void Statistics::add_waiting(double duration){
   this->waiting(duration);
 }
 
-void Statistics::add_waiter_no_queue(double duration){
-  this->waiter_no_queue(duration);
+void Statistics::add_cook_no_queue(double duration){
+  this->cook_no_queue(duration);
+}
+
+void Statistics::add_waiter_no_queue(Zone * z, double duration){
+  z->waiter_no_queue(duration);
 }
 
 int minutes(int value){

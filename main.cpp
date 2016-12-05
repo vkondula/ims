@@ -163,3 +163,15 @@ Zone::Zone(int waiter_count, vector<int> tables_sizes){
     w->set_zone(this);
   }
 }
+
+void Zone::waiter_no_queue(double duration){
+  this->waiter_waiting(duration);
+}
+
+int Zone::get_id(){
+  return this->id;
+}
+
+int Zone::get_waiter_count(){
+  return this->waiter.size();
+}

@@ -103,7 +103,12 @@ void Cook::prepare_meal_wrapper(){
     }
   }
   if (min_index >= 0) this->prepare_meal(min_index);
-  else Wait(10); // Wait for next order
+  else {
+    double time_wait = 10;
+    if (Time < TIME_END)
+      stat->add_cook_no_queue(time_wait);
+    Wait(time_wait); // Wait for next order
+  }
 }
 
 void Cook::prepare_meal(int ptr){
@@ -114,4 +119,8 @@ void Cook::prepare_meal(int ptr){
 void Cook::prepare_soup(){
   Wait(TIME_TO_PREPARE_SOUP);
   kitchen->soups++;
+}
+
+int Kitchen::get_cook_count(){
+  return this->cook.size();
 }
