@@ -87,7 +87,7 @@ json parse_arguments(int argc, char* argv[]){
       cout << "Simulation model of a restaurant" << endl;
       cout << "./ims [INPUTFILE, [OUTPUTFILE]]" << endl;
       cout << "Usage:" << endl;
-      cout << "  No parameters: imlicit number of waiters, tables, zones and cooks" << endl;
+      cout << "  No parameters: implicit number of waiters, tables, zones and cooks" << endl;
       cout << "  INPUTFILE: set json file, that specifies environment (see examples)" << endl;
       cout << "  OUTPUTFILE: set output file for simulation data" << endl;
       exit(0);
