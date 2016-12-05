@@ -74,6 +74,7 @@ class Zone {
   int id;
 public:
   Zone(int waiter_count, vector<int> tables_sizes);
+  ~Zone();
   Store * find_table(int min_size, bool force);
   Queue q;
   Queue priority_q;
@@ -90,5 +91,6 @@ class Generator : public Event {
 
 nlohmann::json parse_arguments(int argc, char* argv[]);
 void init_zones(nlohmann::json args);
+void dealoc_global();
 
 #endif // MAIN_H

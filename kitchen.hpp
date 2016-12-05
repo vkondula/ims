@@ -32,6 +32,9 @@ class Kitchen {
   bool get_soups(Group * group);
 public:
   Kitchen(int cooks);
+  ~Kitchen(){
+    for (Cook * c : this->cook) { delete c; }
+  };
   bool get_order_wrapper(Group * group);
   void activate_cooks();
   int get_cook_count();

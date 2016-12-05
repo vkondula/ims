@@ -35,6 +35,7 @@ int main(int argc, char* argv[]) {
   (new Generator)->Activate();
   Run();
   stat->Output();
+  dealoc_global();
   return 0;
 }
 
@@ -42,9 +43,9 @@ void Generator::Behavior(){
   if(Time < TIME_END){
 
     if (Time > PEAK_TIME_START && Time < PEAK_TIME_END){ // more people comming
-      Activate(Time + Exponential(MINUTE));
+      Activate(Time + Exponential(MINUTE + 40));
     }else{
-      Activate(Time + Exponential(2 * MINUTE));
+      Activate(Time + Exponential(2 * MINUTE + 40));
     }
     double pick_group = Random();//TODO: change weights
     int member_count = 0;
@@ -164,6 +165,11 @@ Zone::Zone(int waiter_count, vector<int> tables_sizes){
   }
 }
 
+Zone::~Zone(){
+  for (Waiter * w : this->waiter) { delete w; }
+  for (Store * s : this->table) { delete s; }
+}
+
 void Zone::waiter_no_queue(double duration){
   this->waiter_waiting(duration);
 }
@@ -174,4 +180,10 @@ int Zone::get_id(){
 
 int Zone::get_waiter_count(){
   return this->waiter.size();
+}
+
+void dealoc_global(){
+  for (Zone * z : zones){ delete z; }
+  delete kitchen;
+  delete stat;
 }
