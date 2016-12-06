@@ -50,7 +50,7 @@ void Generator::Behavior(){
     double pick_group = Random();//TODO: change weights
     int member_count = 0;
 
-    if (pick_group > 0    && pick_group <= 0.08)         member_count=1;
+    if (pick_group > 0    && pick_group <= 0.12)         member_count=1;
     if (pick_group > 0.08 && pick_group <= 0.44)         member_count=2;
     if (pick_group > 0.44 && pick_group <= 0.57)         member_count=3;
     if (pick_group > 0.57 && pick_group <= 0.83)         member_count=4;
