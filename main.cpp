@@ -43,9 +43,9 @@ void Generator::Behavior(){
   if(Time < TIME_END){
 
     if (Time > PEAK_TIME_START && Time < PEAK_TIME_END){ // more people comming
-      Activate(Time + Exponential(MINUTE + 40));
+      Activate(Time + Exponential(MINUTE + 20));
     }else{
-      Activate(Time + Exponential(2 * MINUTE + 40));
+      Activate(Time + Exponential(2 * MINUTE + 20));
     }
     double pick_group = Random();//TODO: change weights
     int member_count = 0;
